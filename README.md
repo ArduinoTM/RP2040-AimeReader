@@ -1,5 +1,5 @@
 # RP2040 Game Controller
-Modified tinyusb HID example to make the Raspberry Pi Pico appear as an USB HID Gamepad.
+Modified tinyusb CDC example to make the Raspberry Pi Pico appear as an AimeCard-Reader.
 
 ## Build instructions
 Insturctions based on Ubuntu 20.04.1 LTS tested under WSL2
@@ -20,12 +20,12 @@ cd ..
 
 3. Clone and build this repository
 ```
-git clone https://github.com/Drewol/rp2040-gamecon
-cd rp2040-gamecon
+git clone https://github.com/ArduinoTM/RP2040-USB -b Aime_Reader
+cd RP2040-USB
 mkdir build
 cd build
 cmake ..
 make
 ```
 
-4. Upload the `gamecon.uf2` that was created in your build directory.
+4. Upload the `rp2040-CardReader.uf2` that was created in your build directory.
