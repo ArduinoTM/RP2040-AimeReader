@@ -39,7 +39,7 @@ The WS2818 LED should be connected to pico Pin-GP2(can be modified in /src/aime_
 
 |   Things  |   Status  |
 |    :--:   |    :--:   |
-|add hw serial switch|▶|
+|add hw serial switch|⏸|
 |add 🌶 support|▶|
 |add special keys|▶|
 |any other things?|💯|
