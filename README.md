@@ -1,4 +1,4 @@
-# RP2040 Game Controller
+# RP2040 AimeCard Reader
 Modified tinyusb CDC example to make the Raspberry Pi Pico appear as an AimeCard-Reader.
 
 ## Build instructions
@@ -29,3 +29,17 @@ make
 ```
 
 4. Upload the `rp2040-CardReader.uf2` that was created in your build directory.
+
+## Note
+PN532 should be HSU mode
+connect PN532 Pin-SCL\RXD to pico Pin-GP4,PN532 Pin-SDA\TXD to pico Pin-GP5
+The WS2818 LED should be connected to pico Pin-GP2(can be modified in /src/aime_reader.cpp)
+
+## TO DO
+
+|   Things  |   Status  |
+|    :--:   |    :--:   |
+|add hw serial switch|▶|
+|add 🌶 support|▶|
+|add special keys|▶|
+|any other things?|💯|
