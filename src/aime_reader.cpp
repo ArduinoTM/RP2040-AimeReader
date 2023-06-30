@@ -1,6 +1,7 @@
 #include "aime_reader.h"
 #include "aime_cmd.h"
 
+#include <PicoLed.hpp>
 #include <PN532_HSU.h>
 #include <PN532.h>
 
@@ -8,6 +9,10 @@
 
 PN532_HSU pn532_hsu;
 PN532 nfc(pn532_hsu);
+
+#define CARD_LIGHT_PIN 2
+
+auto card_light = PicoLed::addLeds<PicoLed::WS2812B>(pio1, 0,CARD_LIGHT_PIN, 16, PicoLed::FORMAT_GRB);
 
 static packet_req_t req;
 static packet_res_t res;
@@ -34,11 +39,12 @@ void sg_nfc_cmd_felica_encap();
 
 void Aime_Process_Packet()
 {
-    printf("Aime_Process_Packet!Lenth:%d,Req_addr:0x%x,Req_Num:%d,CMD:0x%x,Payload_Len:%d\r\n",req.frame_len,req.addr,req.seq_no,req.cmd,req.payload_len);
+    // printf("Aime_Process_Packet!Lenth:%d,Req_addr:0x%x,Req_Num:%d,CMD:0x%x,Payload_Len:%d\r\n",req.frame_len,req.addr,req.seq_no,req.cmd,req.payload_len);
     switch (req.cmd)
     {
     case kNFCCMD_TO_NORMAL_MODE:
     {
+        printf("/----------------------------\r\n");
         printf("Aime Board: To Normal Mode\n");
         sg_nfc_cmd_reset();
         // printf("Aime_Process_CALLBack!frame_len:%d,addr:0x%x,seq_num:%d,cmd:%x,ststus:%d,payload_len:%d\r\n",\
@@ -46,51 +52,51 @@ void Aime_Process_Packet()
         break;
     }
     case kNFCCMD_GET_FW_VERSION:
-        printf("Aime Board: Get FW Version\n");
+        // printf("Aime Board: Get FW Version\n");
         sg_nfc_cmd_get_fw_version();
         break;
     case kNFCCMD_GET_HW_VERSION:
-        printf("Aime Board: Get HW Version\n");
+        // printf("Aime Board: Get HW Version\n");
         sg_nfc_cmd_get_hw_version();
         break;
     case kNFCCMD_CARD_DETECT:
-        printf("Aime Board: Card Detect\n");
+        // printf("Aime Board: Card Detect\n");
         sg_nfc_cmd_poll();
         break;
     case kNFCCMD_MIFARE_READ:
-        printf("Aime Board: Mifare Read\n");
+        // printf("Aime Board: Mifare Read\n");
         sg_nfc_cmd_mifare_read_block();
         break;
     case kNFCCMD_NFC_THROUGH:
-        printf("Aime Board: NFC Though\n");
+        // printf("Aime Board: NFC Though\n");
         sg_nfc_cmd_felica_encap();
         break;
     case kNFCCMD_MIFARE_AUTHORIZE_B:
-        printf("Aime Board: Aime Auth\n");
+        // printf("Aime Board: Aime Auth\n");
         sg_nfc_cmd_aime_authenticate();
         break;
     case kNFCCMD_MIFARE_AUTHORIZE_A:
-        printf("Aime Board: Bana Auth\n");
+        // printf("Aime Board: Bana Auth\n");
         sg_nfc_cmd_bana_authenticate();
         break;
     case kNFCCMD_CARD_SELECT:
-        printf("Aime Board: Select Tag\n");
+        // printf("Aime Board: Select Tag\n");
         sg_nfc_cmd_mifare_select_tag();
         break;
     case kNFCCMD_MIFARE_KEY_SET_B:
-        printf("Aime Board: Set Aime Key\n");
+        // printf("Aime Board: Set Aime Key\n");
         sg_nfc_cmd_mifare_set_key_aime();
         break;
     case kNFCCMD_MIFARE_KEY_SET_A:
-        printf("Aime Board: Set Bana Key\n");
+        // printf("Aime Board: Set Bana Key\n");
         sg_nfc_cmd_mifare_set_key_bana();
         break;
     case kNFCCMD_START_POLLING:
-        printf("Aime Board: Start Polling\n");
+        // printf("Aime Board: Start Polling\n");
         sg_nfc_cmd_radio_on();
         break;
     case kNFCCMD_STOP_POLLING:
-        printf("Aime Board: Stop Polling\n");
+        // printf("Aime Board: Stop Polling\n");
         sg_nfc_cmd_radio_off();
         break;
     case kNFCCMD_EXT_TO_NORMAL_MODE:
@@ -102,12 +108,12 @@ void Aime_Process_Packet()
         sg_led_cmd_get_info();
         break;
     case kNFCCMD_EXT_BOARD_LED_RGB:
-        printf("Aime LED Board: Sed LED RGB Color\n");
+        printf("Aime LED Board: Set LED RGB Color\n");
         sg_led_cmd_set_color();
         break;
     default:
         sg_res_init(0);
-        printf("Aime Default Orpran\r\n");
+        // printf("Aime Default Orpran\r\n");
         break;
     }
     
@@ -139,8 +145,8 @@ void Aime_Process(){
         if(packet == 0xE0 && !is_escaped){              //包头是E0还是0E？
             in_size = 0;
             checksum = 0;
-            printf("//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n");
-            printf("GET 0xE0! Package RESET!\r\n");
+            // printf("//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n");
+            // printf("GET 0xE0! Package RESET!\r\n");
             continue;
         }
         
@@ -170,9 +176,10 @@ void sg_res_init(uint8_t payload_len) { //初始化模板
 }
 
 void sg_nfc_cmd_reset() { //重置读卡器
-    // card_light.setBrightness(0x10);
-    // card_light.clear();
-    // card_light.show();
+    card_light.setBrightness(0x80);
+    card_light.clear();
+    printf("LED Color Clear!\r\n");
+    //card_light.show();
     nfc.begin();
     nfc.setPassiveActivationRetries(0x10); //设定等待次数,0xFF永远等待
     nfc.SAMConfig();
@@ -182,7 +189,6 @@ void sg_nfc_cmd_reset() { //重置读卡器
         res.status = 3;
         return;
     }
-    // board_led_write(1);
     // FastLED.showColor(0xFF0000);
 }
 
@@ -222,8 +228,8 @@ void sg_led_cmd_get_info() {
 }
 
 void sg_led_cmd_set_color() {
-    // card_light.fill(PicoLed::RGB(req.color_payload[0], req.color_payload[1], req.color_payload[2]));
-    // card_light.show();
+    card_light.fill(PicoLed::RGB(req.color_payload[0], req.color_payload[1], req.color_payload[2]));
+    card_light.show();
 }
 
 void sg_nfc_cmd_radio_on() {

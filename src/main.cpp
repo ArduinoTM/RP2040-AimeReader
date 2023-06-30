@@ -53,7 +53,7 @@ int main(void)
   gpio_set_function(4,GPIO_FUNC_UART);
   gpio_set_function(5,GPIO_FUNC_UART);
 
-  printf("Hello World!\r\n");
+//  printf("Hello World!\r\n");
 
   while (1)
   {
