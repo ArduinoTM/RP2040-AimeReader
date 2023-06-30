@@ -28,8 +28,13 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "pico/stdlib.h"
+#include "hardware/uart.h"
 #include "bsp/board.h"
 #include "tusb.h"
+
+#include "USB_Serial.h"
+#include "aime_reader.h"
 
 //------------- prototypes -------------//
 static void cdc_task(void);
@@ -41,35 +46,20 @@ int main(void)
 
   tusb_init();
 
+  uart_init(uart0, 115200);
+  gpio_set_function(0,GPIO_FUNC_UART);
+  gpio_set_function(1,GPIO_FUNC_UART);
+
+  printf("Hello World!\r\n");
+
   while (1)
   {
     tud_task(); // tinyusb device task
-    cdc_task();
+    Aime_Process(); //
+    //cdc_task();
   }
 
   return 0;
-}
-
-// echo to either Serial0 or Serial1
-// with Serial0 as all lower case, Serial1 as all upper case
-static void echo_serial_port(uint8_t itf, uint8_t buf[], uint32_t count)
-{
-  for(uint32_t i=0; i<count; i++)
-  {
-    if (itf == 0)
-    {
-      // echo back 1st port as lower case
-      if (isupper(buf[i])) buf[i] += 'a' - 'A';
-    }
-    else
-    {
-      // echo back 2nd port as upper case
-      if (islower(buf[i])) buf[i] -= 'a' - 'A';
-    }
-
-    tud_cdc_n_write_char(itf, buf[i]);
-  }
-  tud_cdc_n_write_flush(itf);
 }
 
 //--------------------------------------------------------------------+
@@ -77,24 +67,14 @@ static void echo_serial_port(uint8_t itf, uint8_t buf[], uint32_t count)
 //--------------------------------------------------------------------+
 static void cdc_task(void)
 {
-  uint8_t itf;
-
-  for (itf = 0; itf < CFG_TUD_CDC; itf++)
-  {
-    // connected() check for DTR bit
-    // Most but not all terminal client set this when making connection
-    // if ( tud_cdc_n_connected(itf) )
-    {
-      if ( tud_cdc_n_available(itf) )
-      {
-        uint8_t buf[64];
-
-        uint32_t count = tud_cdc_n_read(itf, buf, sizeof(buf));
-
-        // echo back to both serial ports
-        echo_serial_port(0, buf, count);
-        echo_serial_port(1, buf, count);
-      }
-    }
+  static uint8_t data;
+  char strBuffer[100];
+  if(USB_Serial_Available()){
+    USB_Serial_Read(&data);
+    // sprintf(strBuffer,"USB Get Data:0x%02x\r\n",data);
+    // uart_puts(uart0,strBuffer);
+    printf("USB Get Data:0x%02x\r\n",data);
+    USB_Serial_Write(data);
+    USB_Serial_Flush();
   }
 }

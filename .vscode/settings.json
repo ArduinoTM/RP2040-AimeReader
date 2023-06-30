@@ -12,6 +12,9 @@
         "memory": "c",
         "new": "c",
         "functional": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "tusb.h": "c",
+        "board.h": "c",
+        "ctype.h": "c"
     }
 }
