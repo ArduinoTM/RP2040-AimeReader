@@ -8,10 +8,11 @@
 #include <time.h>
 #include <ctype.h>
 
+#include <PN532_HSU.h>
+#include <PN532.h>
+
 uint8_t AimeKey[6], BanaKey[6];
 
-// PN532_HSU pn532_hsu;
-// PN532 nfc(pn532_hsu);
 
 // auto card_light = PicoLed::addLeds<PicoLed::WS2812B>(pio1, 0,
 //                                                      CARD_LIGHT_PIN, 16, PicoLed::FORMAT_GRB);

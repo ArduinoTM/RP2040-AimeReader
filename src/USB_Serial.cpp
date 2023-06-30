@@ -43,6 +43,6 @@ uint8_t USB_Serial_Available(){
     return false;
 }
 
-uint8_t USB_Serial_Flush(){
+void USB_Serial_Flush(){
     tud_cdc_n_write_flush(0);
 }

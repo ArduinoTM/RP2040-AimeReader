@@ -47,8 +47,11 @@ int main(void)
   tusb_init();
 
   uart_init(uart0, 115200);
+  uart_init(uart1, 115200);
   gpio_set_function(0,GPIO_FUNC_UART);
   gpio_set_function(1,GPIO_FUNC_UART);
+  gpio_set_function(4,GPIO_FUNC_UART);
+  gpio_set_function(5,GPIO_FUNC_UART);
 
   printf("Hello World!\r\n");
 

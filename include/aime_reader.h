@@ -7,6 +7,10 @@
 #include <time.h>
 #include <ctype.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
 #include "bsp/board.h"
@@ -44,5 +48,8 @@ enum nfc_command_list
 
 void Aime_Process();
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif // !__AIME_READER_H__

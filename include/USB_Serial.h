@@ -13,6 +13,6 @@ uint8_t USB_Serial_Read(uint8_t *buffer);
 void USB_Serial_Write(uint8_t byte);
 void USB_Serial_WriteHead();
 uint8_t USB_Serial_Available();
-uint8_t USB_Serial_Flush();
+void USB_Serial_Flush();
 
 #endif // !__USB_SERIAL
